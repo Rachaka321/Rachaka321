@@ -1,31 +1,27 @@
-name: Paper Run
+name: Paper Trading Bot
 
 on:
-  workflow_dispatch:        # Allows you to run manually from GitHub
-  schedule:
-    - cron: "*/30 * * * *"  # Runs every 30 minutes
+  push:
+    branches: [ main ]  # triggers when you push to main branch
+  workflow_dispatch:    # allows manual trigger
 
 jobs:
-  paper_trade:
+  run-bot:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        run: pip install --upgrade pip && pip install -r requirements.txt
 
-      - name: Run bot in paper mode
-        env:
-          MODE: paper       # Use this inside your Python code to toggle real vs demo
+      - name: Start Paper Trading Bot
         run: |
           echo "Starting paper trading bot..."
           python robot_trader.py
