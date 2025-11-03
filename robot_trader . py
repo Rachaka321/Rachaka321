@@ -1,34 +1,53 @@
-name: Paper Trading Bot
+# robot_trader.py
+import time
+import random
+from datetime import datetime
 
-on:
-  schedule:
-    - cron: '0 * * * *'  # Every hour
-  workflow_dispatch:      # Allows manual trigger
+TRADING_SYMBOL = "BTC-USD"
+BALANCE = 1000
+POSITION = 0
+trade_log = []
 
-jobs:
-  run-bot:
-    runs-on: ubuntu-latest
+def log_trade(action, price, amount):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    trade = {"time": timestamp, "action": action, "price": price, "amount": amount}
+    trade_log.append(trade)
+    print(trade)
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+def get_market_price():
+    return round(random.uniform(30000, 35000), 2)
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
+def decide_trade(price):
+    if price < 31000:
+        return "BUY"
+    elif price > 34000:
+        return "SELL"
+    else:
+        return "HOLD"
 
-      - name: Install dependencies if requirements.txt exists
-        run: |
-          if [ -f requirements.txt ]; then
-            echo "Installing dependencies..."
-            pip install --upgrade pip
-            pip install -r requirements.txt
-          else
-            echo "No requirements.txt found. Skipping installation."
-          fi
+def main():
+    global BALANCE, POSITION
+    print("Paper Trading Bot Started...")
 
-      - name: Start Paper Trading Bot
-        run: |
-          echo "Starting paper trading bot..."
-          python robot_trader.py
+    price = get_market_price()
+    action = decide_trade(price)
+    amount = 0
+
+    if action == "BUY":
+        amount = BALANCE / price
+        POSITION += amount
+        BALANCE -= amount * price
+        log_trade("BUY", price, round(amount, 4))
+    elif action == "SELL" and POSITION > 0:
+        amount = POSITION
+        BALANCE += amount * price
+        POSITION = 0
+        log_trade("SELL", price, round(amount, 4))
+    else:
+        print(f"{datetime.now()} - No action. Price: {price}, Position: {POSITION}")
+
+    print(f"Balance: ${round(BALANCE,2)}, Position: {round(POSITION,4)} coins")
+    print("Run complete.\n")
+
+if __name__ == "__main__":
+    main()
