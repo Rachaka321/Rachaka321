@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+env/
+venv/
+.env
+.env.*
+*.sqlite3
+
+# Data and logs
+*.csv
+logs/
+trade_log.csv
+historical_ohlcv.csv
+
+# Editor
+.vscode/
+.idea/
+*.swp
