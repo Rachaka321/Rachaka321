@@ -1,7 +1,7 @@
 your-project/
 │
-├─ robot_trader.py       # Your main bot script
-├─ requirements.txt      # Python dependencies
+├─ robot_trader.py        script
+├─ requirements.txt      
 └─ .github/
    └─ workflows/
-      └─ paper_run.yml   # Your Paper Run YAML file
+      └─ paper_run.yml   
