@@ -1,27 +1,61 @@
-name: Paper Trading Bot
+# robot_trader.py
+import time
+import random
+from datetime import datetime
 
-on:
-  schedule:
-    - cron: '0 * * * *'  # every hour
-  workflow_dispatch:      # manual trigger allowed
+# === CONFIG ===
+TRADING_SYMBOL = "BTC-USD"   # Example, can be any symbol
+INITIAL_BALANCE = 1000       # USD
+POSITION = 0                 # Number of coins held
 
-jobs:
-  run-bot:
-    runs-on: ubuntu-latest
+# Simple trade log
+trade_log = []
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+def log_trade(action, price, amount):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    trade = {"time": timestamp, "action": action, "price": price, "amount": amount}
+    trade_log.append(trade)
+    print(trade)
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
+def get_market_price():
+    # Simulated market price
+    return round(random.uniform(30000, 35000), 2)
 
-      - name: Install dependencies
-        run: pip install --upgrade pip && pip install -r requirements.txt
+def decide_trade(price):
+    # Random simple logic: buy if price < 31k, sell if price > 34k
+    if price < 31000:
+        return "BUY"
+    elif price > 34000:
+        return "SELL"
+    else:
+        return "HOLD"
 
-      - name: Start Paper Trading Bot
-        run: |
-          echo "Starting paper trading bot..."
-          python robot_trader.py
+def main():
+    global POSITION, INITIAL_BALANCE
+    print("Paper Trading Bot Started...")
+
+    # Simulate a single trade run (can be looped for more frequent checks)
+    price = get_market_price()
+    action = decide_trade(price)
+    amount = 0
+
+    if action == "BUY":
+        amount = INITIAL_BALANCE / price
+        POSITION += amount
+        INITIAL_BALANCE -= amount * price
+        log_trade("BUY", price, round(amount, 4))
+
+    elif action == "SELL" and POSITION > 0:
+        amount = POSITION
+        INITIAL_BALANCE += amount * price
+        POSITION = 0
+        log_trade("SELL", price, round(amount, 4))
+    
+    else:
+        print(f"{datetime.now()} - No action. Price: {price}, Position: {POSITION}")
+
+    print(f"Balance: ${round(INITIAL_BALANCE, 2)}, Position: {round(POSITION, 4)} coins")
+    print("Run complete.\n")
+
+if __name__ == "__main__":
+    main()
