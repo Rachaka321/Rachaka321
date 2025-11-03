@@ -1,12 +1,9 @@
-- 👋 Hi, I’m @Rachaka321
-- 👀 I’m interested in ...
-- 🌱 I’m currently learning ...
-- 💞️ I’m looking to collaborate on ...
-- 📫 How to reach me ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
+# Robot Trader — skeleton
 
-<!---
-Rachaka321/Rachaka321 is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-You can click the Preview link to take a look at your changes.
---->
+Automated trading bot skeleton (Python) — indicators, strategy, risk manager, backtester, and basic Binance client (ccxt).
+
+## Quick start (local / paper)
+1. Clone:
+   ```bash
+   git clone git@github.com:YOURUSER/robot-trader.git
+   cd robot-trader
